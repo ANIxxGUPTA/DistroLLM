@@ -48,7 +48,7 @@ const Metrics = () => {
   }, []);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText("http://localhost:7070/metrics").then(() => {
+    navigator.clipboard.writeText("https://web-production-82857.up.railway.app/metrics").then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     });
@@ -127,7 +127,7 @@ const Metrics = () => {
           <button className="btn-copy" onClick={handleCopy}>{copied ? "Copied!" : "Copy URL"}</button>
         </div>
         <div className="prom-details">
-          <span>Endpoint: <a href="http://localhost:7070/metrics" target="_blank" rel="noreferrer">http://localhost:7070/metrics</a></span>
+          <span>Endpoint: <a href="https://web-production-82857.up.railway.app/metrics" target="_blank" rel="noreferrer">https://web-production-82857.up.railway.app/metrics</a></span>
           <span>Format: text/plain (Prometheus 0.0.4)</span>
         </div>
         <div className="prom-raw">

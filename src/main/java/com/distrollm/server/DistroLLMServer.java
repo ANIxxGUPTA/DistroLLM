@@ -40,7 +40,9 @@ public class DistroLLMServer {
         
         Javalin app = Javalin.create(config -> {
             config.bundledPlugins.enableCors(cors -> {
-                cors.addRule(CorsPluginConfig.CorsRule::anyHost);
+                cors.addRule(it -> {
+                    it.anyHost();
+                });
             });
         }).start(port);
         
