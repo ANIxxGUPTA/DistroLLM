@@ -22,8 +22,7 @@ public class DistroLLMServer {
     // 8. GET /classify?prompt=... - Classifies a prompt and returns the complexity score and reasoning.
 
     public static void main(String[] args) {
-        String portEnv = System.getenv("PORT");
-        int port = portEnv != null ? Integer.parseInt(portEnv) : 7070;
+        int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "7070"));
 
         EndpointRegistry registry = new EndpointRegistry();
         

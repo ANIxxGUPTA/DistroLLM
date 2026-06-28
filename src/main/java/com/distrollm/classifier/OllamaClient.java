@@ -36,14 +36,10 @@ public class OllamaClient {
             
             if (response.statusCode() == 200) {
                 String body = response.body();
-                // Simple parsing to extract the "response" field from the JSON output.
-                // In production, we'd use a robust JSON library like Jackson or Gson.
                 String prefix = "\"response\":\"";
                 int start = body.indexOf(prefix);
                 if (start != -1) {
                     start += prefix.length();
-                    // We look for the end of the response block. 
-                    // This relies on the standard structure Ollama returns.
                     int end = body.indexOf("\",\"done\"");
                     if (end != -1 && end > start) {
                         String extracted = body.substring(start, end);
@@ -52,11 +48,10 @@ public class OllamaClient {
                 }
                 return body; 
             }
+            throw new RuntimeException("Non-200 status code: " + response.statusCode());
         } catch (Exception e) {
-            // Catch timeouts or connection issues to fallback to mock response
+            return "Mock response for: " + prompt.substring(0, Math.min(50, prompt.length()));
         }
-
-        return "Mock response for: " + prompt.substring(0, Math.min(50, prompt.length()));
     }
 
     public boolean isOllamaRunning() {
