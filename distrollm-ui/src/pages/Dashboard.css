@@ -1,0 +1,33 @@
+.dashboard-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.middle-row {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 20px;
+}
+
+.chart-card {
+  background-color: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chart-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}

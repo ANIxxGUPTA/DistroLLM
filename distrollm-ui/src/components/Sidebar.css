@@ -1,0 +1,52 @@
+.sidebar {
+  width: 220px;
+  height: 100vh;
+  background-color: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.logo {
+  padding: 24px 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-menu {
+  flex: 1;
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-item {
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.nav-item:hover {
+  background-color: var(--surface2);
+  color: var(--text);
+}
+
+.nav-item.active {
+  background-color: var(--accent-dim);
+  color: var(--accent);
+}
+
+.version-badge {
+  padding: 20px;
+  color: var(--text-muted);
+  font-size: 12px;
+}

@@ -1,0 +1,215 @@
+.endpoints-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative; /* for toast positioning */
+  height: 100%;
+}
+
+.page-header .title {
+  font-size: 16px;
+  color: var(--text-muted);
+  font-weight: normal;
+  margin-bottom: 16px;
+}
+
+.summary-bar {
+  display: flex;
+  gap: 12px;
+}
+
+.stat-chip {
+  background-color: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 6px 16px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.stat-value {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.endpoint-card {
+  background-color: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.ep-id {
+  color: var(--accent);
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.ep-model {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.ep-health {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.health-ok {
+  color: var(--success);
+  background-color: rgba(34, 197, 94, 0.1);
+}
+
+.health-bad {
+  color: var(--danger);
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.cb-state-block {
+  height: 60px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.cb-closed {
+  background-color: #0f2a1a;
+  color: #22c55e;
+}
+
+.cb-open {
+  background-color: #2a0f0f;
+  color: #ef4444;
+}
+
+.cb-half {
+  background-color: #2a1f0f;
+  color: #f59e0b;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.stat-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cell-label {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.cell-value {
+  font-size: 13px;
+  color: var(--text);
+  font-weight: bold;
+  word-break: break-all;
+}
+
+.progress-track {
+  width: 100%;
+  height: 4px;
+  background-color: var(--surface);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.progress-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.bar-simple {
+  background-color: var(--success);
+}
+
+.bar-medium {
+  background-color: var(--warning);
+}
+
+.bar-complex {
+  background-color: var(--danger);
+}
+
+.fault-panel {
+  margin-top: 24px;
+  background-color: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fault-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.fault-icon {
+  color: var(--warning);
+  font-size: 20px;
+}
+
+.fault-titles h3 {
+  font-size: 16px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.fault-titles p {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.fault-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-fault {
+  background-color: transparent;
+  border: 1px solid var(--warning);
+  color: var(--warning);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-fault:hover {
+  background-color: var(--warning);
+  color: #fff;
+}
