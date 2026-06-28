@@ -1,7 +1,9 @@
 target/
+*.class
+*.jar
+loadtest/results_*.csv
+loadtest/__pycache__/
 .idea/
 *.iml
 .DS_Store
-*.class
-*.log
-.vscode/
+loadtest/results_*

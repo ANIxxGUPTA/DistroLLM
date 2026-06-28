@@ -3,6 +3,7 @@ package com.distrollm.router;
 import com.distrollm.classifier.ComplexityClassifier;
 import com.distrollm.classifier.OllamaClient;
 import com.distrollm.classifier.QueryComplexity;
+import com.distrollm.metrics.MetricsEngine;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,11 +19,9 @@ public class SmartQueryRouter {
     private final ComplexityClassifier classifier;
     private final OllamaClient ollamaClient;
     
-    // Added breakers for Circuit Breaker pattern
     private final ConcurrentHashMap<String, CircuitBreaker> breakers = new ConcurrentHashMap<>();
     private final RetryPolicy retryPolicy;
     
-    // Updated to track stats dynamically using String keys
     private final ConcurrentHashMap<String, AtomicLong> stats = new ConcurrentHashMap<>();
 
     public SmartQueryRouter(WorkerPool workerPool, EndpointRegistry endpointRegistry) {
@@ -45,6 +44,9 @@ public class SmartQueryRouter {
     }
     
     public QueryResult routeQuerySync(String prompt) {
+        MetricsEngine metrics = MetricsEngine.getInstance();
+        metrics.increment("requests.total");
+
         QueryComplexity complexity = classifier.classify(prompt);
         stats.get(complexity.name()).incrementAndGet();
         
@@ -52,6 +54,7 @@ public class SmartQueryRouter {
         ModelEndpoint endpoint = endpointRegistry.getEndpointForQuery(queryId);
         
         int rerouteAttempts = 0;
+        QueryResult finalResult = null;
         
         while (endpoint != null && rerouteAttempts < 3) {
             String endpointId = endpoint.getId();
@@ -65,30 +68,54 @@ public class SmartQueryRouter {
                 complexity.getTimeoutMs()
             );
             
-            // Wrap the WorkerPool submission within a Callable for the RetryPolicy
             Callable<QueryResult> callableTask = () -> workerPool.submit(task).get();
             
             try {
-                // Execute the task utilizing circuit breakers and exponential backoff retries
-                return retryPolicy.executeWithRetry(callableTask, endpointId);
+                finalResult = retryPolicy.executeWithRetry(callableTask, endpointId);
+                break;
             } catch (CircuitOpenException e) {
                 stats.get("circuitOpenCount").incrementAndGet();
+                metrics.increment("circuit.open.count");
                 
-                // If the circuit is open, we mark the endpoint as unhealthy in the registry
-                // so the next call to getEndpointForQuery() finds a different, healthy node
                 endpoint.markUnhealthy();
                 endpoint = endpointRegistry.getEndpointForQuery(queryId);
                 rerouteAttempts++;
+                metrics.increment("retry.count");
             } catch (MaxRetriesExceededException e) {
                 endpoint.markUnhealthy();
                 endpoint = endpointRegistry.getEndpointForQuery(queryId);
                 rerouteAttempts++;
+                metrics.increment("retry.count");
             } catch (Exception e) {
-                return new QueryResult(UUID.fromString(queryId), "Error: " + e.getMessage(), 0, endpointId, false);
+                finalResult = new QueryResult(UUID.fromString(queryId), "Error: " + e.getMessage(), 0, endpointId, false);
+                break;
             }
         }
         
-        return new QueryResult(UUID.fromString(queryId), "No healthy endpoints available to process request", 0, "unknown", false);
+        if (finalResult == null) {
+            finalResult = new QueryResult(UUID.fromString(queryId), "No healthy endpoints available to process request", 0, "unknown", false);
+        }
+
+        if (finalResult.isSuccess()) {
+            metrics.increment("requests.success");
+        } else {
+            metrics.increment("requests.failed");
+        }
+        
+        metrics.recordLatency(complexity.name(), finalResult.getLatencyMs());
+        
+        if (finalResult.getModelEndpoint() != null && !finalResult.getModelEndpoint().equals("unknown")) {
+            metrics.recordLatency(finalResult.getModelEndpoint(), finalResult.getLatencyMs());
+        }
+
+        metrics.setGauge("active.threads", workerPool.getActiveCount());
+        metrics.setGauge("queue.depth", workerPool.getQueueSize());
+
+        return finalResult;
+    }
+
+    public Map<String, Object> getMetricsSnapshot() {
+        return MetricsEngine.getInstance().getSnapshot();
     }
 
     public Map<String, Long> getRoutingStats() {
@@ -97,5 +124,15 @@ public class SmartQueryRouter {
             formattedStats.put(entry.getKey(), entry.getValue().get());
         }
         return formattedStats;
+    }
+
+    // Added for Phase 6 APIs
+    public String getCircuitState(String endpointId) {
+        CircuitBreaker breaker = breakers.get(endpointId);
+        return breaker != null ? breaker.getState().name() : "CLOSED";
+    }
+
+    public void shutdown() {
+        workerPool.gracefulShutdown();
     }
 }

@@ -1,0 +1,62 @@
+{
+  "uid": "distrollm-dash-1",
+  "title": "DistroLLM Metrics",
+  "schemaVersion": 36,
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Total Requests",
+      "targets": [
+        {
+          "expr": "distrollm_requests_total",
+          "legendFormat": "Total"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 6 }
+    },
+    {
+      "type": "gauge",
+      "title": "P95 Latency",
+      "targets": [
+        {
+          "expr": "distrollm_latency_p95_ms",
+          "legendFormat": "{{endpoint}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 500 }
+            ]
+          }
+        }
+      },
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 6 }
+    },
+    {
+      "type": "stat",
+      "title": "Failure Rate %",
+      "targets": [
+        {
+          "expr": "(distrollm_requests_failed / distrollm_requests_total) * 100",
+          "legendFormat": "Failures"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 6, "w": 12, "h": 6 }
+    },
+    {
+      "type": "gauge",
+      "title": "Queue Depth",
+      "targets": [
+        {
+          "expr": "distrollm_queue_depth",
+          "legendFormat": "Depth"
+        }
+      ],
+      "gridPos": { "x": 12, "y": 6, "w": 12, "h": 6 }
+    }
+  ]
+}
